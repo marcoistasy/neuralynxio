@@ -1,15 +1,15 @@
 # imports
 
 import numpy as np
+
 from channel import Channel
 
-# properties
+# _____CONSTANTS_____
 
-HEADER_SIZE = 16 * 1024  # Header has 16 kilobytes length (note that this seems to be variable - if issues arise,
-# double check the header length)
+HEADER_SIZE = 16 * 1024  # Header has 16 kilobytes length (note that this seems to be variable - if issues arise, double check the header length)
 
 
-# Functions
+# _____PUBLIC FUNCTIONS_____
 
 def read_neuralynx_ncs(file):
     """
@@ -49,10 +49,10 @@ def read_neuralynx_ncs(file):
     # return a variable mapping the read file onto the relevant data structure (see neuralynx_models for
     # specifications of the structures)
 
-    return Channel(raw_chan_number=raw['ChannelNumber'],
+    return Channel(channel_number=raw['ChannelNumber'][0],
                    time_stamps=raw['TimeStamp'],
                    raw_readings=raw['Samples'],
-                   hdr_dict=hdr_dict)
+                   header=hdr_dict)
 
 
 def read_neuralynx_files(file_paths):
@@ -80,6 +80,8 @@ def read_neuralynx_files(file_paths):
 
     return ncs_files
 
+
+# _____PRIVATE FUNCTIONS_____
 
 def _read_header(fid):
     """

@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from channel import Channel
+from scripts.channel import Channel
 
 # _____CONSTANTS_____
 
@@ -135,6 +135,3 @@ def _parse_header(raw_hdr):
             print('Unable to parse parameter line from Neuralynx header: {}'.format(line))
 
     return hdr
-
-#%%
-channel = read_neuralynx_ncs('RAM5_0001.ncs')

@@ -13,10 +13,20 @@ class Channel:
     # A class that holds all information from a neuralynx .ncs file
 
     def __init__(self, channel_number, time_stamps, raw_readings, header):
-        """ Init """
+        """
+
+        Returns:
+
+            A channel object with the following properties:
+                sampling_frequency: sampling frequency of the channel
+                channel_number: number of the channel
+                channel_name: name of the channel
+                readings: readings for a given time frame in microvolts
+
+        """
 
         # properties that can be directly set from source
-        self.time_stamps = time_stamps
+        self._time_stamps = time_stamps
         self._header = header
 
         # properties that must be indexed from source
@@ -75,6 +85,18 @@ class Channel:
             return int(index)
         except:
             return 0
+
+    @property
+    def timestamp(self):
+        """
+        Returns:
+             A tuple of time stamps denoting (start time, end time)
+        """
+
+        created = {'date': self._header['TimeCreated'].split()[0], 'time': self._header['TimeCreated'].split()[1]}
+        closed = {'date': self._header['TimeClosed'].split()[0], 'time': self._header['TimeClosed'].split()[1]}
+
+        return created, closed
 
     # _____METHODS_____
 

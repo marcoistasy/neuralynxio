@@ -46,8 +46,7 @@ def read_neuralynx_ncs(file):
     # Close file
     fid.close()
 
-    # return a variable mapping the read file onto the relevant data structure (see neuralynx_models for
-    # specifications of the structures)
+    # return a variable mapping the read file onto the relevant data structure
 
     return Channel(channel_number=raw['ChannelNumber'][0],
                    time_stamps=raw['TimeStamp'],

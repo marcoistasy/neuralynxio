@@ -11,13 +11,13 @@ HEADER_SIZE = 16 * 1024  # Header has 16 kilobytes length (note that this seems 
 
 # _____PUBLIC FUNCTIONS_____
 
-def read_neuralynx_ncs(file):
+def read_neuralynx_file(file_path):
     """
 
     Function for taking a neuralynx .ncs file and reading it in a  python compatible way
 
     Args:
-        file: .ncs
+        file_path: .ncs
         NCS file containing the recordings.
 
     Returns:
@@ -26,7 +26,7 @@ def read_neuralynx_ncs(file):
     """
 
     # Open file
-    fid = open(file, 'rb')
+    fid = open(file_path, 'rb')
 
     # Reference auxiliary attributes (such as ADBitVolts) from header
     hdr_dict = _parse_header(_read_header(fid))
@@ -69,15 +69,15 @@ def read_neuralynx_files(file_paths):
 
     """
 
-    ncs_files = []
+    channels = []
 
     for file in file_paths:
         try:
-            ncs_files.append(read_neuralynx_ncs(file))
+            channels.append(read_neuralynx_file(file))
         except:
             print('Could not open file {}'.format(file))
 
-    return ncs_files
+    return channels
 
 
 # _____PRIVATE FUNCTIONS_____

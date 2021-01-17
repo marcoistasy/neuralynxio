@@ -1,12 +1,14 @@
 # imports
 
-import numpy as np
-import ntpath
 import copy
+import ntpath
+
+import numpy as np
+
 
 # _____CONSTANTS_____
 
-MICROVOLT_FACTOR = 1e+6
+# MICROVOLT_FACTOR = 1e+6
 
 class Channel:
 
@@ -36,7 +38,8 @@ class Channel:
 
         # properties that must be computed from source
         self._raw_readings = raw_readings.ravel()
-        self.readings = self._raw_readings * float(self._header['ADBitVolts']) * MICROVOLT_FACTOR  # convert to microvolts
+        self.readings = self._raw_readings * float(
+            self._header['ADBitVolts'])  # * MICROVOLT_FACTOR  # convert to microvolts
 
     # _____PROPERTIES_____
 

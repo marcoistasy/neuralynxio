@@ -6,14 +6,8 @@ import mne
 # _____PUBLIC FUNCTIONS____
 
 def merge(channels):
-    # todo
-
-    # variable for holding the return
-    merged_channels = []
-
-    #
-    for channel in channels:
-        pass
+    # todo: implement a function to take channels and elide them
+    pass
 
 
 def sort_by_sampling_frequency(channels, desired_frequency):
@@ -62,7 +56,7 @@ def check_metadata(channels):
 
     # for all subsequent channel, make sure there metadata is the same
     for i, channel in enumerate(channels):
-        assert date == channel.timestamp[0], 'Dates do not match for channel {}'.format(i)
+        assert date == channel.date_and_time, 'Dates do not match for channel {}'.format(i)
         assert number_of_readings == channel.readings.shape[0], 'Number of readings do not match for channel {}'.format(
             i)
         assert index == channel.index, 'Indices do not match for channel {}'.format(i)
@@ -104,13 +98,13 @@ def create_mne_data_and_metadata(channels, sampling_frequency, description):
     # instantiate channel data
     for channel in channels:
         channel_names.append(channel.channel_name)
-        channel_types.append(
-            'seeg')  # note, this will have to be manually changed later as some EOG data will also be collected
+        channel_types.append(_get_channel_type(channel.channel_name))
         channel_data.append(channel.readings)
 
     # create mne data and metadata objects
     info = mne.create_info(channel_names, sampling_frequency, channel_types)
     info['description'] = description
+    info['sfreq'] = sampling_frequency
 
     return channel_data, info
 
@@ -121,7 +115,7 @@ def create_mne_data_and_metadata(channels, sampling_frequency, description):
 def _get_expected_data(channel):
     # get all relevant metadata from a single channel object
 
-    date = channel.timestamp[0]
+    date = channel.date_and_time
     number_of_readings = channel.readings.shape[0]
     sampling_frequency = channel.sampling_frequency
     index = channel.index
@@ -129,3 +123,20 @@ def _get_expected_data(channel):
     last_timestamp = channel._time_stamps[-1]
 
     return date, number_of_readings, sampling_frequency, index, first_timestamp, last_timestamp
+
+
+def _get_channel_type(channel_name):
+    # get name of electrodes and corresponding electrode type
+
+    surface_electrode_names = ['A11', 'A21', 'Zg11', 'Zg21', 'C31', 'C41', 'Cz1', 'E11', 'E21', 'F31', 'F41', 'Fz1',
+                               'P31', 'P41', 'Pz1']
+    ocular_electrode_names = ['O1', 'O2']
+
+    if channel_name == 'EKG1':
+        return 'ecg'
+    elif channel_name in surface_electrode_names:
+        return 'eeg'
+    elif channel_name in ocular_electrode_names:
+        return 'eog'
+    else:
+        return 'seeg'

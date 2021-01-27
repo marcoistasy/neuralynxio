@@ -1,14 +1,13 @@
 # imports
-
-import copy
 import ntpath
+from datetime import datetime
 
 import numpy as np
 
-
 # _____CONSTANTS_____
 
-# MICROVOLT_FACTOR = 1e+6
+MILLISECOND_TO_SECOND_FACTOR = 1e+6
+
 
 class Channel:
 
@@ -38,8 +37,7 @@ class Channel:
 
         # properties that must be computed from source
         self._raw_readings = raw_readings.ravel()
-        self.readings = self._raw_readings * float(
-            self._header['ADBitVolts'])  # * MICROVOLT_FACTOR  # convert to microvolts
+        self.readings = self._raw_readings * float(self._header['ADBitVolts'])
 
     # _____PROPERTIES_____
 
@@ -90,33 +88,14 @@ class Channel:
             return 0
 
     @property
-    def timestamp(self):
+    def date_and_time(self):
         """
         Returns:
              A tuple of time stamps denoting (start time, end time)
         """
 
-        created = {'date': self._header['TimeCreated'].split()[0], 'time': self._header['TimeCreated'].split()[1]}
-        closed = {'date': self._header['TimeClosed'].split()[0], 'time': self._header['TimeClosed'].split()[1]}
+        # note that the timestamps obtained from ncs files are in milliseconds. must be converted to seconds.
+        created = datetime.utcfromtimestamp(self._time_stamps[0] / MILLISECOND_TO_SECOND_FACTOR)
+        closed = datetime.utcfromtimestamp(self._time_stamps[-1] / MILLISECOND_TO_SECOND_FACTOR)
 
         return created, closed
-
-    # _____METHODS_____
-
-    def copy_with_reassigned_readings(self, new_readings):
-        """
-
-        Function for copying the current Neuralynx object with different readings.
-        Useful when applying filters to the data.
-
-        Args:
-            new_readings: new readings to be applied to the old NeuralynxNCS object
-
-        Returns:
-            A new NeuralynxNCS object
-
-        """
-
-        new_ncs = copy.deepcopy(self)
-        new_ncs.readings = new_readings
-        return new_ncs

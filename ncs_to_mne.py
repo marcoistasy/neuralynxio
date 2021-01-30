@@ -1,3 +1,4 @@
+#%%
 # imports
 
 import gc
@@ -44,4 +45,4 @@ if channels:
     del channel_data, info, channel_data_id, info_id
     gc.collect()
 
-    raw.save('{}/{}_raw.fif'.format(DIRECTORY_PATH, PATIENT_ID.lower()), overwrite=True)
+    raw.save('{}/{}_raw.fif'.format(DIRECTORY_PATH, PATIENT_ID.lower()), overwrite=True, fmt='double')

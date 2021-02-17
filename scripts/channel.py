@@ -6,7 +6,7 @@ import numpy as np
 
 # _____CONSTANTS_____
 
-MILLISECOND_TO_SECOND_FACTOR = 1e+6
+MICROSECOND_TO_SECOND_FACTOR = 1e+6
 
 
 class Channel:
@@ -94,8 +94,8 @@ class Channel:
              A tuple of time stamps denoting (start time, end time)
         """
 
-        # note that the timestamps obtained from ncs files are in milliseconds. must be converted to seconds.
-        created = datetime.utcfromtimestamp(self._time_stamps[0] / MILLISECOND_TO_SECOND_FACTOR)
-        closed = datetime.utcfromtimestamp(self._time_stamps[-1] / MILLISECOND_TO_SECOND_FACTOR)
+        # note that the timestamps obtained from ncs files are in microseconds. must be converted to seconds.
+        created = datetime.utcfromtimestamp(self._time_stamps[0] / MICROSECOND_TO_SECOND_FACTOR)
+        closed = datetime.utcfromtimestamp(self._time_stamps[-1] / MICROSECOND_TO_SECOND_FACTOR)
 
         return created, closed

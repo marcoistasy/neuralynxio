@@ -130,7 +130,7 @@ def _get_channel_type(channel_name):
 
     surface_electrode_names = ['A11', 'A21', 'Zg11', 'Zg21', 'C31', 'C41', 'Cz1', 'E11', 'E21', 'F31', 'F41', 'Fz1',
                                'P31', 'P41', 'Pz1']
-    ocular_electrode_names = ['O1', 'O2']
+    ocular_electrode_names = ['O1', 'O11', 'O2', 'O21']
 
     if channel_name == 'EKG1':
         return 'ecg'

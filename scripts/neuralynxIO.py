@@ -116,7 +116,7 @@ def _parse_header(raw_hdr):
     """
 
     # Parse the header string into a dictionary of name value pairs
-    hdr = dict()
+    hdr = {}
 
     # Decode the header as iso-8859-1 (the spec says ASCII, but there is at least one case of 0xB5 in some headers)
     raw_hdr = raw_hdr.decode('iso-8859-1')

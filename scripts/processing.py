@@ -56,14 +56,20 @@ def check_metadata(channels):
 
     # for all subsequent channel, make sure there metadata is the same
     for i, channel in enumerate(channels):
-        assert date == channel.date_and_time, 'Dates do not match for channel {}'.format(i)
-        assert number_of_readings == channel.readings.shape[0], 'Number of readings do not match for channel {}'.format(
-            i)
-        assert index == channel.index, 'Indices do not match for channel {}'.format(i)
-        assert sampling_frequency == channel.sampling_frequency, 'Sampling frequencies do not match for channel {}'.format(
-            i)
-        assert first_timestamp == channel._time_stamps[0], 'First timestamps do not match for channel {}'.format(i)
-        assert last_timestamp == channel._time_stamps[-1], 'Last timestamps do not match for channel {}'.format(i)
+        if date != channel.date_and_time:
+            raise AssertionError('Dates do not match for channel {}'.format(i))
+        if number_of_readings != channel.readings.shape[0]:
+            raise AssertionError('Number of readings do not match for channel {}'.format(
+                i))
+        if index != channel.index:
+            raise AssertionError('Indices do not match for channel {}'.format(i))
+        if sampling_frequency != channel.sampling_frequency:
+            raise AssertionError('Sampling frequencies do not match for channel {}'.format(
+                i))
+        if first_timestamp != channel._time_stamps[0]:
+            raise AssertionError('First timestamps do not match for channel {}'.format(i))
+        if last_timestamp != channel._time_stamps[-1]:
+            raise AssertionError('Last timestamps do not match for channel {}'.format(i))
 
     # data is okay
     print('Data is okay.')

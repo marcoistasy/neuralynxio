@@ -134,9 +134,8 @@ def _get_channel_type(channel_name):
 
     if channel_name == 'EKG1':
         return 'ecg'
-    elif channel_name in surface_electrode_names:
+    if channel_name in surface_electrode_names:
         return 'eeg'
-    elif channel_name in ocular_electrode_names:
+    if channel_name in ocular_electrode_names:
         return 'eog'
-    else:
-        return 'seeg'
+    return 'seeg'

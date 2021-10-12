@@ -1,7 +1,7 @@
 # imports
 
 import mne
-
+import numpy as np
 
 # _____PUBLIC FUNCTIONS____
 
@@ -54,6 +54,9 @@ def check_metadata(channels):
     date, number_of_readings, sampling_frequency, index, first_timestamp, last_timestamp = _get_expected_data(
         channels[0])
 
+    # print expected values to user
+    print('Expected date: {} \n Expected number of readings: {} \n Expected sampling frequency: {} \n Expected first timestamp: {} \n Expected last timestamp: {}'.format(date, number_of_readings, sampling_frequency, first_timestamp, last_timestamp))
+    
     # for all subsequent channel, make sure there metadata is the same
     for i, channel in enumerate(channels):
         assert date == channel.date_and_time, 'Dates do not match for channel {}'.format(i)
@@ -108,6 +111,31 @@ def create_mne_data_and_metadata(channels, sampling_frequency, description):
 
     return channel_data, info
 
+def create_np_records(channels):
+    """
+
+    Create Numpy data and metadata from Channels.
+
+    Args:
+        channels: [channels]
+            array of channels
+
+    Returns:
+        records: [float]
+            2D array of channel readings and names
+
+    """
+    
+    # instantiate metadata for mne
+    channel_names = []
+    channel_data = []
+
+    # instantiate channel data
+    for channel in channels:
+        channel_names.append(channel.channel_name)
+        channel_data.append(channel.readings)
+    
+    return channel_data, channel_names
 
 # _____PRIVATE FUNCTIONS____
 

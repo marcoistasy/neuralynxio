@@ -38,8 +38,10 @@ for patient_id in PATIENT_IDs:
         gc.collect()
 
         # save np records
+        print('starting to save data file at {}'.format(OUTPUT_PATH))
         np.savez_compressed(OUTPUT_PATH, traces=channel_data, names=channel_names)
-
+        print('finished saving data file.')
+        
         # another memory clean-up
         channel_data_id = id(channel_data)
         del channel_data, channel_data_id

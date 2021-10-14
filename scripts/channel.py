@@ -90,8 +90,10 @@ class Channel:
     @property
     def date_and_time(self):
         """
+
         Returns:
              A tuple of time stamps denoting (start time, end time)
+             
         """
 
         # note that the timestamps obtained from ncs files are in microseconds. must be converted to seconds.

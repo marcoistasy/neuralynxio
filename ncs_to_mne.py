@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import mne
 
 from scripts.neuralynxIO import read_neuralynx_files
-from scripts.processing import sort_by_sampling_frequency, check_metadata, create_mne_data_and_metadata
+from scripts.processing import sort_by_sampling_frequency, check_metadata, extract_records
 from utils.io import get_all_files_with_extension
 
 # set matplotlib backend
@@ -35,9 +35,17 @@ for patient_id in PATIENT_IDs:
 
     # CHECK METADATA AND CREATE MNE OBJECTS
     if channels:
-        # test metadata and produce mne data and metadata objects
+
+        # test metadata
         check_metadata(channels)
-        channel_data, info = create_mne_data_and_metadata(channels, SAMPLING_FREQUENCY, DESCRIPTION)
+
+        # create records
+        channel_data, channel_names, channel_types = extract_records(channels)
+
+        # pass records to mne info object
+        info = mne.create_info(channel_names, SAMPLING_FREQUENCY, channel_types)
+        info['description'] = DESCRIPTION
+        info['sfreq'] = SAMPLING_FREQUENCY
 
         # memory clean-up
         channels_memory_id = id(channels)

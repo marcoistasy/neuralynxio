@@ -1,8 +1,3 @@
-# imports
-
-import mne
-import numpy as np
-
 # _____PUBLIC FUNCTIONS____
 
 def merge(channels):
@@ -72,70 +67,37 @@ def check_metadata(channels):
     print('Data is okay.')
 
 
-def create_mne_data_and_metadata(channels, sampling_frequency, description):
+def extract_records(channels):
     """
 
-    Create MNE data and metadata objects from Channels.
+    Create data and metadata records from Channels.
 
     Args:
-        channels: [channels]
-            array of channels
-        sampling_frequency: float
-            sampling frequency of channels
-        description: str
-            description of dataset
+        channels: [Channels]
+            array of Channels
 
     Returns:
         channel_data: [float]
-            n-dimensional array of channel readings
-        info: mne.info
-            info object containing all metadata
+            MxN matrix of channel readings where M is the channel id and N is a reading
+        channel_names: [str]
+            the channel names
+        channel_names: [str]
+            the type of channel -- either 'eog' 'ecg' 'eeg' or 'seeg'
 
     """
-
+    
     # instantiate metadata for mne
+    channel_data = []
     channel_names = []
     channel_types = []
-    channel_data = []
 
     # instantiate channel data
     for channel in channels:
+        channel_data.append(channel.readings)
         channel_names.append(channel.channel_name)
         channel_types.append(_get_channel_type(channel.channel_name))
-        channel_data.append(channel.readings)
 
-    # create mne data and metadata objects
-    info = mne.create_info(channel_names, sampling_frequency, channel_types)
-    info['description'] = description
-    info['sfreq'] = sampling_frequency
-
-    return channel_data, info
-
-def create_np_records(channels):
-    """
-
-    Create Numpy data and metadata from Channels.
-
-    Args:
-        channels: [channels]
-            array of channels
-
-    Returns:
-        records: [float]
-            2D array of channel readings and names
-
-    """
-    
-    # instantiate metadata for mne
-    channel_names = []
-    channel_data = []
-
-    # instantiate channel data
-    for channel in channels:
-        channel_names.append(channel.channel_name)
-        channel_data.append(channel.readings)
-    
-    return channel_data, channel_names
+    return channel_data, channel_names, channel_types
 
 # _____PRIVATE FUNCTIONS____
 

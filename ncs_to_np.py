@@ -5,7 +5,7 @@ import gc
 import numpy as np
 
 from scripts.neuralynxIO import read_neuralynx_files
-from scripts.processing import check_metadata, create_np_records
+from scripts.processing import check_metadata, extract_records
 from utils.io import get_all_files_with_extension
 
 # CONSTANTS
@@ -26,9 +26,12 @@ for patient_id in PATIENT_IDs:
 
     # CHECK METADATA AND CREATE NP OBJECTS
     if channels:
-        # test metadata and produce arrrays
+
+        # test metadata
         check_metadata(channels)
-        channel_data, channel_names = create_np_records(channels)
+
+        # create records
+        channel_data, channel_names, _ = extract_records(channels)
 
         # memory clean-up
         channels_memory_id = id(channels)

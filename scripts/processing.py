@@ -6,7 +6,7 @@ import numpy as np
 # _____PUBLIC FUNCTIONS____
 
 def merge(channels):
-    # todo: implement a function to take channels and elide them
+    # todo: implement a function to take channels and elides them
     pass
 
 

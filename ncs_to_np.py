@@ -1,5 +1,3 @@
-# %%
-
 # imports
 
 import gc
@@ -13,11 +11,11 @@ from utils.io import get_all_files_with_extension
 # CONSTANTS
 PATIENT_IDs = [1, 2, 3]
 FILE_EXTENSION = '.ncs'
-OUTPUT_PATH = 'path/to/output.npz'
 
 for patient_id in PATIENT_IDs:
 
     DIRECTORY_PATH = '/path/to/data/{}'.format(patient_id)
+    OUTPUT_PATH = 'path/to/output{}.npz'.format(patient_id)
 
     # READ ALL NCS FILES IN A GIVEN DIRECTORY
     file_paths = get_all_files_with_extension(DIRECTORY_PATH, FILE_EXTENSION)
@@ -46,9 +44,3 @@ for patient_id in PATIENT_IDs:
         channel_data_id = id(channel_data)
         del channel_data, channel_data_id
         gc.collect()
-
-# %%
-loaded = np.load(OUTPUT_PATH)
-#%%
-traces = loaded['traces']
-# %%

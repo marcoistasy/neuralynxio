@@ -77,7 +77,9 @@ def np_to_mda(path_to_np, output_path, dtype='float64', verbose=True):
     """
 
     # load the file and extract relevant information
+    print('Loading numpy data from {}'.format(path_to_np))
     loaded = np.load(path_to_np)
+    print('Finished loading numpy data from {}'.format(path_to_np))
     names = loaded['names']
     traces = loaded['traces']
 

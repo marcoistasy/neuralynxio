@@ -65,7 +65,7 @@ def np_to_mda(path_to_np, output_path, dtype='float64', verbose=True):
     Converts npz files to the mda format for use with mountainsort and writes them to disk
 
     Args:
-        path_to_npz: str
+        path_to_np: str
             path to the npz file 
         output_path: str
             path to save the mda file
@@ -84,10 +84,11 @@ def np_to_mda(path_to_np, output_path, dtype='float64', verbose=True):
     traces = loaded['traces']
 
     # write the mda file
-    mdaio.writemda64(traces, output_path, dtype)
+    mdaio.writemda(traces, output_path, dtype)
 
     if verbose:
         mda = mdaio.readmda(output_path)
         print('MDA file was written in the following order: {}'.format(names))
         print('First few data points from original file: {}'.format(traces[0][:11]))
         print('First few data points from mda file: {}'.format(mda[0][:11]))
+

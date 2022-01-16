@@ -5,7 +5,7 @@ import gc
 import numpy as np
 
 from scripts.neuralynxIO import read_neuralynx_files
-from scripts.processing import check_metadata, extract_records
+from scripts.processing import check_metadata, extract_records, plot_channels
 from utils.io import get_all_files_with_extension
 
 # CONSTANTS
@@ -29,6 +29,9 @@ for patient_id in PATIENT_IDs:
 
         # test metadata
         check_metadata(channels)
+
+        # plot
+        plot_channels(channels, OUTPUT_PATH)
 
         # create records
         channel_data, channel_names, _ = extract_records(channels)

@@ -1,3 +1,6 @@
+import matplotlib.pyplot as plt
+
+
 # _____PUBLIC FUNCTIONS____
 
 def merge(channels):
@@ -17,7 +20,7 @@ def sort_by_sampling_frequency(channels, desired_frequency):
             frequency of desired channels
 
     Returns:
-        return_channels: array
+        return_channels: [Channels]
             array of channels with desired frequency
     """
 
@@ -30,6 +33,35 @@ def sort_by_sampling_frequency(channels, desired_frequency):
             return_channels.append(channel)
 
     return return_channels
+
+
+def plot_channels(channels, output_directory):
+    """
+
+    Plots the trace for a given time channel
+
+    Args:
+        channels: [channels]
+            array of channels to be plotted
+        output_directory: str
+            the directory at which to save the plots
+
+    """
+
+    for channel in channels:
+        # create figure
+        fig, ax = plt.subplots(figsize=(24, 12))
+
+        # customise figure
+        ax.set_title('{}'.format(channel.channel_name))
+        ax.set_xlabel('Time (s)')
+        ax.set_ylabel('Voltage (v)')
+
+        # plot trace
+        ax.plot(channel.time_vector, channel.readings)
+
+        # save figure
+        plt.savefig('{}/{}.png'.format(output_directory, channel.channel_name))
 
 
 # noinspection PyProtectedMember
@@ -50,8 +82,10 @@ def check_metadata(channels):
         channels[0])
 
     # print expected values to user
-    print('Expected date: {} \n Expected number of readings: {} \n Expected sampling frequency: {} \n Expected first timestamp: {} \n Expected last timestamp: {}'.format(date, number_of_readings, sampling_frequency, first_timestamp, last_timestamp))
-    
+    print(
+        'Expected date: {} \n Expected number of readings: {} \n Expected sampling frequency: {} \n Expected first timestamp: {} \n Expected last timestamp: {}'.format(
+            date, number_of_readings, sampling_frequency, first_timestamp, last_timestamp))
+
     # for all subsequent channel, make sure there metadata is the same
     for i, channel in enumerate(channels):
         assert date == channel.date_and_time, 'Dates do not match for channel {}'.format(i)
@@ -85,7 +119,7 @@ def extract_records(channels):
             the type of channel -- either 'eog' 'ecg' 'eeg' or 'seeg'
 
     """
-    
+
     # instantiate metadata for mne
     channel_data = []
     channel_names = []
@@ -98,6 +132,7 @@ def extract_records(channels):
         channel_types.append(_get_channel_type(channel.channel_name))
 
     return channel_data, channel_names, channel_types
+
 
 # _____PRIVATE FUNCTIONS____
 

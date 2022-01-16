@@ -3,7 +3,7 @@ import os
 
 import numpy as np
 
-from utils import mdaio
+from utils.external import mdaio
 
 
 def get_all_files_with_extension(directory, extension):
@@ -18,7 +18,7 @@ def get_all_files_with_extension(directory, extension):
             type of files to look through
 
     Returns:
-        file_paths: array
+        file_paths: [str]
             array of file paths
     """
 
@@ -72,7 +72,7 @@ def np_to_mda(path_to_np, output_path, dtype='float64', verbose=True):
         dtype: str
             data type by which to save the mda file -- can be 'uint8', 'uint16', 'uint32' 'int16' 'int32' 'float32', 'float64'
         verbose: bool
-            whether or not to do an integrity check after
+            whether to do an integrity check after
 
     """
 

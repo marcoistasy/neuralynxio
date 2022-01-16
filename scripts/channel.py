@@ -22,7 +22,7 @@ class Channel:
                 sampling_frequency: sampling frequency of the channel
                 channel_number: number of the channel
                 channel_name: name of the channel
-                readings: readings for a given time frame in microvolts
+                readings: readings for a given time frame in volts
 
         """
 
@@ -32,7 +32,7 @@ class Channel:
 
         # properties that must be indexed from source
         self.sampling_frequency = float(self._header['SamplingFrequency'])
-        self.channel_number = channel_number
+        self.channel_number = int(channel_number)
         self.channel_name = self._header['AcqEntName']
 
         # properties that must be computed from source
@@ -96,7 +96,8 @@ class Channel:
              
         """
 
-        # note that the timestamps obtained from ncs files are in microseconds. must be converted to seconds.
+        # note that the timestamps obtained from ncs files are in microseconds - must be converted to seconds
+        # also note that the timestamps obtained from the readings are different from those written in the header
         created = datetime.utcfromtimestamp(self._time_stamps[0] / MICROSECOND_TO_SECOND_FACTOR)
         closed = datetime.utcfromtimestamp(self._time_stamps[-1] / MICROSECOND_TO_SECOND_FACTOR)
 

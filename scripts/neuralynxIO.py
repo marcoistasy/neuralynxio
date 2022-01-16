@@ -6,7 +6,7 @@ from scripts.channel import Channel
 
 # _____CONSTANTS_____
 
-HEADER_SIZE = 16 * 1024  # Header has 16 kilobytes length (note that this seems to be variable - if issues arise, double check the header length)
+HEADER_SIZE = 16 * 1024  # Header has 16 kilobytes length (note that this seems to be variable - if issues arise, double-check the header length)
 
 
 # _____PUBLIC FUNCTIONS_____
@@ -17,8 +17,8 @@ def read_neuralynx_file(file_path):
     Function for taking a neuralynx .ncs file and reading it in a  python compatible way
 
     Args:
-        file_path: .ncs
-        NCS file containing the recordings.
+        file_path: str
+        .ncs file containing the recordings.
 
     Returns:
         A NeuralynxNCS object for the given data file
@@ -60,11 +60,11 @@ def read_neuralynx_files(file_paths):
     Runs the function above but for an array of files
 
     Args:
-        file_paths: array
-            File paths of NCS recordings.
+        file_paths: [str]
+            File paths of .ncs recordings.
 
     Returns:
-        ncs_files: array
+        ncs_files: [Channel]
             array of NeuralynxNCS objects
 
     """

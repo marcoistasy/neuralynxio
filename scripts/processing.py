@@ -50,7 +50,7 @@ def plot_channels(channels, output_directory):
 
     for channel in channels:
         # create figure
-        fig, ax = plt.subplots(figsize=(24, 12))
+        fig, ax = plt.subplots(figsize=(32, 12))
 
         # customise figure
         ax.set_title('{}'.format(channel.channel_name))
@@ -60,8 +60,9 @@ def plot_channels(channels, output_directory):
         # plot trace
         ax.plot(channel.time_vector, channel.readings)
 
-        # save figure
+        # save figure and close
         plt.savefig('{}/{}.png'.format(output_directory, channel.channel_name))
+        plt.close('all')
 
 
 # noinspection PyProtectedMember

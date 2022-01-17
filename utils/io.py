@@ -1,12 +1,13 @@
 import ntpath
 import os
+import gc
 
 import numpy as np
 
 from utils.external import mdaio
 
 
-def get_all_files_with_extension(directory, extension):
+def get_all_files_with_extension(directory, extension, keyword=None):
     """
 
     Get all files in a directory with a certain extension
@@ -16,6 +17,8 @@ def get_all_files_with_extension(directory, extension):
             path to directory to look through
         extension: str
             type of files to look through
+        keyword: str
+            if applicable, get only files with this keyword
 
     Returns:
         file_paths: [str]
@@ -24,10 +27,19 @@ def get_all_files_with_extension(directory, extension):
 
     file_paths = []
 
+    # iterate over all files in directory
     for file in os.listdir(directory):
 
+        # iterate over all files with a given extension
         if file.endswith(extension):
-            file_paths.append(os.path.join(directory, file))
+
+            # no further sorting is required by keyword
+            if keyword is None:
+                file_paths.append(os.path.join(directory, file))
+
+            # sort further by keyword
+            else:
+                file_paths.append(os.path.join(directory, file)) if keyword in file else None
 
     return sorted(file_paths)
 
@@ -84,11 +96,20 @@ def np_to_mda(path_to_np, output_path, dtype='float64', verbose=True):
     traces = loaded['traces']
 
     # write the mda file
-    mdaio.writemda(traces, output_path, dtype)
+    if dtype == 'float64':
+        mdaio.writemda64(traces, output_path)
+    else:
+        raise NotImplementedError('Writing .mda files in format other than float64 has not yet been implemented')
 
     if verbose:
         mda = mdaio.readmda(output_path)
         print('MDA file was written in the following order: {}'.format(names))
         print('First few data points from original file: {}'.format(traces[0][:11]))
         print('First few data points from mda file: {}'.format(mda[0][:11]))
+
+    # memory clean up
+    del loaded
+    del names
+    del traces
+    gc.collect()
 

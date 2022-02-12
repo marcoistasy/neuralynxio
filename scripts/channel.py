@@ -1,5 +1,5 @@
 # imports
-import ntpath
+
 from datetime import datetime
 
 import numpy as np
@@ -13,7 +13,7 @@ class Channel:
 
     # A class that holds all information from a neuralynx .ncs file
 
-    def __init__(self, channel_number, time_stamps, raw_readings, header):
+    def __init__(self, channel_number, time_stamps, raw_readings, header, scaling):
         """
 
         Returns:
@@ -26,6 +26,9 @@ class Channel:
 
         """
 
+        # properties defined by the user
+        self.scaling_factor = self.set_scaling_factor(scaling)
+
         # properties that can be directly set from source
         self._time_stamps = time_stamps
         self._header = header
@@ -37,7 +40,7 @@ class Channel:
 
         # properties that must be computed from source
         self._raw_readings = raw_readings.ravel()
-        self.readings = self._raw_readings * float(self._header['ADBitVolts'])
+        self.readings = self._raw_readings * float(self._header['ADBitVolts']) * self.scaling_factor[0]
 
     # _____PROPERTIES_____
 
@@ -50,42 +53,7 @@ class Channel:
 
         """
 
-        return self.readings.shape[0] / self.sampling_frequency
-
-    @property
-    def time_vector(self):
-        """
-
-        Returns:
-
-            a 1d time vector on which to map the recordings
-
-        """
-
-        return np.linspace(0, self.duration, self.readings.shape[0])
-
-    @property
-    def index(self):
-        """
-
-        Determines the index of the channel. In effect, whether the channel is stand-alone or a continuation of another
-
-        Returns:
-
-            Index of a channel
-
-        """
-
-        # strip file name of all superfluous data
-        file_name = self._header['OriginalFileName']
-        file_name_without_extension = ntpath.basename(file_name).split('.ncs')[0]
-
-        # if the channel is part of a series, return the index. Otherwise, return 0.
-        try:
-            index = file_name_without_extension.split('_')[1]
-            return int(index)
-        except:
-            return 0
+        return len(self.readings) / self.sampling_frequency
 
     @property
     def date_and_time(self):
@@ -98,7 +66,33 @@ class Channel:
 
         # note that the timestamps obtained from ncs files are in microseconds - must be converted to seconds
         # also note that the timestamps obtained from the readings are different from those written in the header
-        created = datetime.utcfromtimestamp(self._time_stamps[0] / MICROSECOND_TO_SECOND_FACTOR)
-        closed = datetime.utcfromtimestamp(self._time_stamps[-1] / MICROSECOND_TO_SECOND_FACTOR)
+        created = datetime.utcfromtimestamp(self.time_stamps[0] / MICROSECOND_TO_SECOND_FACTOR)
+        closed = datetime.utcfromtimestamp(self.time_stamps[-1] / MICROSECOND_TO_SECOND_FACTOR)
 
-        return created, closed
+        return {'created': created, 'closed': closed}
+
+    @property
+    def time_stamps(self):
+        """
+
+        Returns:
+             Timestamp (in microsecond) corresponding to each sample
+
+        """
+
+        return np.interp(np.arange(len(self.readings)), np.arange(0, len(self.readings), 512),
+                         self._time_stamps).astype(np.uint64)
+
+    # _____CLASS METHODS_____
+
+    @staticmethod
+    def set_scaling_factor(scaling):
+        # determine the scaling factor
+        if scaling is None:
+            return 1, 'V'
+        elif scaling == 'milli':
+            return 1000, u'mV'
+        elif scaling == 'micro':
+            return 1000000, u'µV'
+        else:
+            raise Exception("Unknown scaling factor")

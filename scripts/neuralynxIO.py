@@ -59,7 +59,8 @@ def read_neuralynx_file(file_path, scaling='micro'):
     return Channel(channel_number=raw['ChannelNumber'][0],
                    time_stamps=raw['TimeStamp'],
                    raw_readings=raw['Samples'],
-                   header=hdr_dict)
+                   header=hdr_dict,
+                   scaling=scaling)
 
 
 def read_neuralynx_files(file_paths):

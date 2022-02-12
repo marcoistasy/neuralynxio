@@ -1,24 +1,29 @@
 # imports
 
+import warnings
+
 import numpy as np
 
 from scripts.channel import Channel
 
 # _____CONSTANTS_____
 
-HEADER_SIZE = 16 * 1024  # Header has 16 kilobytes length (note that this seems to be variable - if issues arise, double-check the header length)
+HEADER_SIZE = 16 * 1024  # header has 16 kilobytes length (note that this seems to be variable - if issues arise, double-check the header length)
+SAMPLES_PER_RECORD = 512  # the number of samples per record of the .ncs file
 
 
 # _____PUBLIC FUNCTIONS_____
 
-def read_neuralynx_file(file_path):
+def read_neuralynx_file(file_path, scaling='micro'):
     """
 
     Function for taking a neuralynx .ncs file and reading it in a  python compatible way
 
     Args:
         file_path: str
-        .ncs file containing the recordings.
+            .ncs file containing the recordings.
+        scaling: None, 'micro', or 'milli'
+            if None, scales the data in Volts -- otherwise, scales according to prefix
 
     Returns:
         A NeuralynxNCS object for the given data file
@@ -35,16 +40,19 @@ def read_neuralynx_file(file_path):
     fid.seek(HEADER_SIZE)
 
     # Read data according to Neuralynx information
-    data_format = np.dtype([('TimeStamp', np.uint64),
-                            ('ChannelNumber', np.uint32),
-                            ('SampleFreq', np.uint32),
-                            ('NumValidSamples', np.uint32),
-                            ('Samples', np.int16, 512)])
+    data_format = np.dtype([('TimeStamp', np.uint64), # timestamp in microseconds for this record -- sample time for the first data point in the samples array
+                            ('ChannelNumber', np.uint32),  # channel number for this record
+                            ('SampleFreq', np.uint32),  # sampling frequency
+                            ('NumValidSamples', np.uint32),  # number of values in Samples containing valid data
+                            ('Samples', np.int16, SAMPLES_PER_RECORD)])  # data points for a record -- currently, the samples array is a [512] array
 
     raw = np.fromfile(fid, dtype=data_format)
 
     # Close file
     fid.close()
+
+    # check that the integrity of the data -- might seem silly, but Neuralynx be wack
+    _check_ncs_records(raw)
 
     # return a variable mapping the read file onto the relevant data structure
 
@@ -134,3 +142,34 @@ def _parse_header(raw_hdr):
             print('Unable to parse parameter line from Neuralynx header: {}'.format(line))
 
     return hdr
+
+
+def _check_ncs_records(raw):
+    """
+    Check that all records in the raw array have similar characteristics throughout the recording
+
+    Args:
+
+        raw: the raw extracted data
+
+    """
+
+    # reference the difference in time stamps to ensure that all records are incremented the same
+    dt = np.diff(raw['TimeStamp'])
+    dt = np.abs(dt - dt[0])
+
+    # check that channel number remains the same
+    if not np.all(raw['ChannelNumber'] == raw[0]['ChannelNumber']):
+        warnings.warn('Channel number changed during record sequence')
+
+    # check that the sampling frequency remains the same
+    if not np.all(raw['SampleFreq'] == raw[0]['SampleFreq']):
+        warnings.warn('Sampling frequency changed during record sequence')
+
+    # check that there are the correct number of samples per time point
+    if not np.all(raw['NumValidSamples'] == 512):
+        warnings.warn('Invalid samples in one or more records')
+
+    # check that the time difference is always less than 1
+    if not np.all(dt <= 1):
+        warnings.warn('Time stamp difference tolerance exceeded')

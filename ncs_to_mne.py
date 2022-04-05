@@ -8,7 +8,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import mne
 
-from scripts.neuralynxIO import read_neuralynx_files
+from scripts.neuralynxIO import read_neuralynx_continuous_files
 from scripts.processing import sort_by_sampling_frequency, check_metadata, extract_records
 from utils.io import get_all_files_with_extension
 
@@ -26,7 +26,7 @@ for patient_id in PATIENT_IDs:
 
     # READ ALL NCS FILES IN A GIVEN DIRECTORY
     file_paths = get_all_files_with_extension(DIRECTORY_PATH, FILE_EXTENSION)
-    channels = read_neuralynx_files(file_paths)
+    channels = read_neuralynx_continuous_files(file_paths)
     DESCRIPTION = 'Patient: {}. Recordings from {} to {}'.format(patient_id, channels[0].date_and_time[0],
                                                                  channels[0].date_and_time[1])
 

@@ -4,7 +4,7 @@ import gc
 
 import numpy as np
 
-from scripts.neuralynxIO import read_neuralynx_files
+from scripts.neuralynxIO import read_neuralynx_continuous_files
 from scripts.processing import check_metadata, extract_records, plot_channels
 from utils.io import get_all_files_with_extension
 
@@ -19,7 +19,7 @@ for patient_id in PATIENT_IDs:
 
     # READ ALL NCS FILES IN A GIVEN DIRECTORY
     file_paths = get_all_files_with_extension(DIRECTORY_PATH, FILE_EXTENSION)
-    channels = read_neuralynx_files(file_paths)
+    channels = read_neuralynx_continuous_files(file_paths)
     
     # print description for user
     print('Creating records for Patient: {}. Recordings from {} to {}'.format(patient_id, channels[0].date_and_time[0], channels[0].date_and_time[1]))
